@@ -1,2 +1,2 @@
-export * from './Preview';
-export * from './Timeline';
+export * from './PreviewPane';
+export * from './TimelinePane';

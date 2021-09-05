@@ -1,7 +1,7 @@
 import SplitPane from 'react-split-pane';
 import { useRef, useEffect, useState } from 'react';
 import { CssBaseline } from '@material-ui/core';
-import { Preview, Timeline } from './components';
+import { PreviewPane, TimelinePane } from './components';
 import { AppContainer, GlobalStyle } from './style';
 
 const App: React.FC = () => {
@@ -12,26 +12,26 @@ const App: React.FC = () => {
         if (container) {
             const { width, height } = container.getBoundingClientRect();
 
-            setDefaultTimelineHeight(Math.round(height * 0.4));
-            setDefaultPreviewWidth(Math.round(width * 0.6));
+            setDefaultTimelinePaneHeight(Math.round(height * 0.4));
+            setDefaultPreviewPaneWidth(Math.round(width * 0.6));
         }
     }, [containerRef]);
 
-    const [defaultTimelineHeight, setDefaultTimelineHeight] = useState(200);
-    const [defaultPreviewWidth, setDefaultPreviewWidth] = useState(200);
+    const [defaultTimelinePaneHeight, setDefaultTimelinePaneHeight] = useState(200);
+    const [defaultPreviewPaneWidth, setDefaultPreviewPaneWidth] = useState(200);
 
     return (
         <AppContainer ref={containerRef}>
             <GlobalStyle />
             <CssBaseline />
 
-            <SplitPane split="horizontal" primary="second" defaultSize={defaultTimelineHeight}>
-                <SplitPane split="vertical" primary="second" defaultSize={defaultPreviewWidth}>
+            <SplitPane split="horizontal" primary="second" defaultSize={defaultTimelinePaneHeight}>
+                <SplitPane split="vertical" primary="second" defaultSize={defaultPreviewPaneWidth}>
                     <div>Whatever ends up here</div>
-                    <Preview />
+                    <PreviewPane />
                 </SplitPane>
 
-                <Timeline />
+                <TimelinePane />
             </SplitPane>
         </AppContainer>
     );
