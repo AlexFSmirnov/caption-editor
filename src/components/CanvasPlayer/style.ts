@@ -12,7 +12,13 @@ export const CanvasPlayerVideo = styled.video`
     display: none;
 `;
 
-export const CanvasPlayerCanvas = styled.canvas`
+interface CanvasPlayerCanvasProps {
+    isMaxWidth?: boolean;
+}
+
+export const CanvasPlayerCanvas = styled.canvas<CanvasPlayerCanvasProps>`
     max-width: 100%;
     max-height: 100%;
+
+    ${props => (props.isMaxWidth ? 'width' : 'height')}: 100%;
 `;
