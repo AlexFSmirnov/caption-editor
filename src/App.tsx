@@ -1,8 +1,14 @@
 import SplitPane from 'react-split-pane';
 import { useRef, useEffect, useState } from 'react';
-import { CssBaseline } from '@material-ui/core';
+import { unstable_createMuiStrictModeTheme as createMuiTheme, ThemeProvider, CssBaseline } from '@material-ui/core';
 import { PreviewPane, TimelinePane } from './components';
 import { AppContainer, GlobalStyle } from './style';
+
+const theme = createMuiTheme({
+    palette: {
+        type: 'dark',
+    },
+});
 
 const App: React.FC = () => {
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -21,19 +27,21 @@ const App: React.FC = () => {
     const [defaultPreviewPaneWidth, setDefaultPreviewPaneWidth] = useState(200);
 
     return (
-        <AppContainer ref={containerRef}>
-            <GlobalStyle />
-            <CssBaseline />
+        <ThemeProvider theme={theme}>
+            <AppContainer ref={containerRef}>
+                <GlobalStyle />
+                <CssBaseline />
 
-            <SplitPane split="horizontal" primary="second" defaultSize={defaultTimelinePaneHeight}>
-                <SplitPane split="vertical" primary="second" defaultSize={defaultPreviewPaneWidth}>
-                    <div>Whatever ends up here</div>
-                    <PreviewPane />
+                <SplitPane split="horizontal" primary="second" defaultSize={defaultTimelinePaneHeight}>
+                    <SplitPane split="vertical" primary="second" defaultSize={defaultPreviewPaneWidth} minSize={250}>
+                        <div>Whatever ends up here</div>
+                        <PreviewPane />
+                    </SplitPane>
+
+                    <TimelinePane />
                 </SplitPane>
-
-                <TimelinePane />
-            </SplitPane>
-        </AppContainer>
+            </AppContainer>
+        </ThemeProvider>
     );
 };
 

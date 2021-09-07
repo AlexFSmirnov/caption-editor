@@ -1,10 +1,21 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { connect } from 'react-redux';
+import { State } from '../../redux/types';
+import { setPlaybackPlayedSeconds, setPlaybackDuration } from '../../redux/actions';
 import { useResizeObserver } from '../../common';
 import { CanvasPlayerCanvas, CanvasPlayerContainer, CanvasPlayerVideo } from './style';
 
 const VIDEO_URL = `${process.env.PUBLIC_URL}/test2.mp4`;
 
-const CanvasPlayer: React.FC = () => {
+interface DispatchProps {
+    setPlaybackPlayedSeconds: (playedSeconds: number) => void;
+    setPlaybackDuration: (duration: number) => void;
+}
+
+export type CanvasPlayerProps = DispatchProps;
+
+// TODO: Remove canvas from the player and use a layered canvas instead?
+const CanvasPlayer: React.FC<CanvasPlayerProps> = ({ setPlaybackDuration, setPlaybackPlayedSeconds }) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -15,13 +26,21 @@ const CanvasPlayer: React.FC = () => {
     const handleNewFrame = useCallback(() => {
         const { current: canvas } = canvasRef;
         const { current: video } = videoRef;
-        const ctx = canvas?.getContext('2d');
+
+        if (!canvas || !video) {
+            return;
+        }
+
+        const { currentTime: playedSeconds } = video;
+        setPlaybackPlayedSeconds(playedSeconds);
+
+        const ctx = canvas?.getContext('2d', { alpha: false });
 
         if (!canvas || !video || !ctx) {
             return;
         }
 
-        console.log('new frame');
+        // console.log('new frame');
 
         ctx.drawImage(video, 0, 0, canvasSize[0], canvasSize[1]);
     }, [canvasRef, videoRef, canvasSize]);
@@ -62,6 +81,7 @@ const CanvasPlayer: React.FC = () => {
     };
 
     const handleVideoPlay = () => {
+        // TODO: Update isPlaying in state
         tick();
     };
 
@@ -72,12 +92,13 @@ const CanvasPlayer: React.FC = () => {
             return;
         }
 
-        const { videoWidth, videoHeight } = video;
+        const { videoWidth, videoHeight, duration } = video;
         setCanvasSize([videoWidth, videoHeight]);
+        setPlaybackDuration(duration);
 
         // TODO: Remove this when controls are added
         video.play();
-        video.volume = 0;
+        video.volume = 0.03;
     };
 
     const videoProps = {
@@ -104,4 +125,7 @@ const CanvasPlayer: React.FC = () => {
     );
 };
 
-export default CanvasPlayer;
+export default connect<{}, DispatchProps, {}, State>(null, {
+    setPlaybackPlayedSeconds,
+    setPlaybackDuration,
+})(CanvasPlayer);

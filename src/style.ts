@@ -29,17 +29,12 @@ export const GlobalStyle = createGlobalStyle`
         background: #000;
         opacity: 0.2;
         z-index: 1;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
         box-sizing: border-box;
-        -moz-background-clip: padding;
-        -webkit-background-clip: padding;
         background-clip: padding-box;
     }
 
     .Resizer:hover {
-        -webkit-transition: all 2s ease;
-        transition: all 2s ease;
+        transition: all 300ms ease;
     }
 
     .Resizer.horizontal {
