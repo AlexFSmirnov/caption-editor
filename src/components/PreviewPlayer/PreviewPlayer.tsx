@@ -1,7 +1,9 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { State } from '../../redux/types';
-import { setPlaybackPlayedSeconds, setPlaybackDuration, setIsPlaying } from '../../redux/actions';
+import { setPlaybackPlayedSeconds, setPlaybackDuration, setIsPlaying, clearIsPlayingRequest, popPendingSeek } from '../../redux/actions';
+import { getIsPlayingPendingChange, getLatestPendingSeek } from '../../redux/selectors';
 import { useResizeObserver } from '../../common';
 import { PreviewPlayerContainer, PreviewPlayerVideo } from './style';
 
@@ -9,20 +11,58 @@ const PLAYBACK_UPDATE_PERIOD = 50;
 
 const VIDEO_URL = `${process.env.PUBLIC_URL}/test2.mp4`;
 
+interface StateProps {
+    isPlayingPendingChange: boolean | null;
+    latestPendingSeek: number | null;
+}
+
 interface DispatchProps {
     setIsPlaying: (isPlaying: boolean) => void;
     setPlaybackPlayedSeconds: (playedSeconds: number) => void;
     setPlaybackDuration: (duration: number) => void;
+    clearIsPlayingRequest: () => void;
+    popPendingSeek: () => void;
 }
 
-export type PreviewPlayerProps = DispatchProps;
+export type PreviewPlayerProps = StateProps & DispatchProps;
 
-const PreviewPlayer: React.FC<PreviewPlayerProps> = ({ setPlaybackDuration, setPlaybackPlayedSeconds, setIsPlaying }) => {
+const PreviewPlayer: React.FC<PreviewPlayerProps> = ({
+    isPlayingPendingChange,
+    latestPendingSeek,
+    setPlaybackDuration,
+    setPlaybackPlayedSeconds,
+    setIsPlaying,
+    clearIsPlayingRequest,
+    popPendingSeek,
+}) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const videoRef = useRef<HTMLVideoElement | null>(null);
 
     const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null);
     const [isPreviewMaxWidth, setIsPreviewMaxWidth] = useState(false);
+
+    useEffect(() => {
+        const { current: video } = videoRef;
+        if (!video) {
+            return;
+        }
+
+        if (isPlayingPendingChange !== null) {
+            if (isPlayingPendingChange) {
+                video.play();
+            } else {
+                video.pause();
+            }
+            clearIsPlayingRequest();
+        }
+
+        if (latestPendingSeek !== null) {
+            video.currentTime = latestPendingSeek * video.duration;
+            popPendingSeek();
+        }
+
+        updateProgress();
+    }, [isPlayingPendingChange, latestPendingSeek]);
 
     const updateProgress = useCallback(() => {
         const { current: video } = videoRef;
@@ -79,8 +119,7 @@ const PreviewPlayer: React.FC<PreviewPlayerProps> = ({ setPlaybackDuration, setP
         setVideoAspectRatio(videoWidth / videoHeight);
         setPlaybackDuration(duration);
 
-        // TODO: Remove this when controls are added
-        video.play();
+        // TODO: Remove this when volume controls are added
         video.volume = 0.03;
     };
 
@@ -102,8 +141,16 @@ const PreviewPlayer: React.FC<PreviewPlayerProps> = ({ setPlaybackDuration, setP
     );
 };
 
-export default connect<{}, DispatchProps, {}, State>(null, {
-    setPlaybackPlayedSeconds,
-    setPlaybackDuration,
-    setIsPlaying,
-})(PreviewPlayer);
+export default connect<StateProps, DispatchProps, {}, State>(
+    createStructuredSelector({
+        isPlayingPendingChange: getIsPlayingPendingChange,
+        latestPendingSeek: getLatestPendingSeek,
+    }),
+    {
+        setPlaybackPlayedSeconds,
+        setPlaybackDuration,
+        setIsPlaying,
+        clearIsPlayingRequest,
+        popPendingSeek,
+    }
+)(PreviewPlayer);

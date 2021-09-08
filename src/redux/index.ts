@@ -16,5 +16,4 @@ const persistConfig = {
 
 export const store = createStore(persistReducer<State, Action>(persistConfig, rootReducer), composeWithDevTools(applyMiddleware(thunk)));
 
-// @ts-expect-error idk will fix later
 export const persistor = persistStore(store);
