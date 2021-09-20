@@ -29,7 +29,7 @@ public class CaptionCreator {
                 OFXEffect effect = media.Generator.OFXEffect;
 
                 OFXStringParameter text = (OFXStringParameter)effect["Text"];
-                text.Value = GetTextValue("Lol kek");
+                text.Value = GetTextValue("Lol kek", 22, FontStyle.Strikeout, "Verdana");
                 OFXRGBAParameter color = (OFXRGBAParameter)effect["TextColor"];
                 color.Value = new OFXColor(1, 0, 0, 1);
 
@@ -46,8 +46,6 @@ public class CaptionCreator {
                 PlugInNode generator = vegas.Generators.GetChildByName("VEGAS Titles & Text");
                 var media = new Media(generator);
 
-                var a = 5;
-
                 var stream = media.Streams[0];
 
                 var newEvent = new VideoEvent(new Timecode("00:00:00:10"), new Timecode("00:00:00:50"));
@@ -58,7 +56,7 @@ public class CaptionCreator {
 
                 OFXStringParameter text = (OFXStringParameter)effect["Text"];
                 MessageBox.Show(text.Value);
-                text.Value = GetTextValue("Lol kek");
+                text.Value = GetTextValue("Lol kek", 22, FontStyle.Strikeout, "Verdana");
                 MessageBox.Show(text.Value);
                 OFXRGBAParameter color = (OFXRGBAParameter)effect["TextColor"];
                 MessageBox.Show(color.Value.R + " " + color.Value.G + " " + color.Value.B + " " + color.Value.A);
@@ -108,23 +106,22 @@ public class CaptionCreator {
         }
     }
 
-    private String GetTextValue(String text, int fontSize = 22, String font = "Calibri") {
-        return (
-            "{" +
-                "\\rtf1\\ansi\\ansicpg1252\\deff0{" + 
-                    "\\fonttbl{" + 
-                        "\\f0\\fnil\\fcharset0 " + font + ";" +
-                    "}" + 
-                "}" + 
-                "\\viewkind4\\uc1\\pard\\lang1033\\f0\\fs" + (fontSize * 2) + " " + text + "\\par" +
-            "}"
-        );
+    private String GetTextValue(String text, int fontSize, FontStyle fontStyle, String font) {
+        var richTextBox = new RichTextBox();
+        richTextBox.Text = text;
+        richTextBox.SelectAll();
+        richTextBox.SelectionFont = new Font(font, fontSize, fontStyle);
+
+        return richTextBox.Rtf;
     }
 }
 
 public partial class ScriptInputForm : Form {
     private Vegas vegas;
     private System.ComponentModel.IContainer components = null;
+    private Label pathLabel;
+    private Label statusLabel;
+    private Button confirmButton;
 
     public ScriptInputForm(Vegas _vegas) {
         this.vegas = _vegas;
@@ -143,31 +140,86 @@ public partial class ScriptInputForm : Form {
     private void InitializeComponent() {
         this.components = new System.ComponentModel.Container();
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        this.ClientSize = new System.Drawing.Size(800, 450);
+        this.ClientSize = new System.Drawing.Size(320, 136);
 
-        this.Text = "Select caption configuration";
+        this.Text = "Open caption configuration";
 
         this.FormBorderStyle = FormBorderStyle.FixedDialog;
         this.MaximizeBox = false;
         this.MinimizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
 
+        pathLabel = new Label();
+        pathLabel.Text = "";
+        pathLabel.AutoSize = false;
+        pathLabel.Location = new Point(10, 10);
+        pathLabel.Size = new Size(300, 32);
+        pathLabel.BorderStyle = BorderStyle.FixedSingle;
+
+        statusLabel = new Label();
+        statusLabel.Text = "Select a file";
+        statusLabel.AutoSize = false;
+        statusLabel.TextAlign = ContentAlignment.MiddleRight;
+        statusLabel.Location = new Point(84, 52);
+        statusLabel.Size = new Size(226, 32);
+
         var browseButton = new Button();
         browseButton.Text = "Browse";
         browseButton.Click += new System.EventHandler(this.OnBrowseClick);
-        browseButton.Location = new Point(10, 10);
+        browseButton.Location = new Point(10, 52);
+        browseButton.Size = new Size(64, 32);
 
+        confirmButton = new Button();
+        confirmButton.Text = "Confirm";
+        confirmButton.Click += new System.EventHandler(this.OnConfirmClick);
+        confirmButton.Location = new Point(10, 94);
+        confirmButton.Size = new Size(300, 32);
+        confirmButton.Enabled = false;
+
+        this.Controls.Add(pathLabel);
+        this.Controls.Add(statusLabel);
         this.Controls.Add(browseButton);
+        this.Controls.Add(confirmButton);
     }
 
     private void OnBrowseClick(object sender, EventArgs eventArgs) {
-        MessageBox.Show("Yes!");
-        OnConfigurationSelected();
+        var fileDialog = new OpenFileDialog();
+        var result = fileDialog.ShowDialog();
+
+        if (result == DialogResult.OK) {
+            var path = fileDialog.FileName;
+            pathLabel.Text = path;
+
+            // TODO: Type-check configuration json
+            if (false) {
+                ShowFileError("Invalid configuration");
+                return;
+            }
+
+            ShowFileSuccess();
+        } else {
+            ShowFileError("File load error");
+        }
     }
 
-    private void OnConfigurationSelected() {
+    private void OnConfirmClick(object sender, EventArgs eventArgs) {
         var captionCreator = new CaptionCreator(vegas);
         captionCreator.Run();
+
+        // TODO: Add progress bar?
+        this.Close();
+    }
+
+    private void ShowFileError(String text) {
+        statusLabel.Text = text;
+        statusLabel.ForeColor = Color.Red;
+        confirmButton.Enabled = false;
+    }
+
+    private void ShowFileSuccess() {
+        statusLabel.Text = "Configuration selected!";
+        statusLabel.ForeColor = Color.Green;
+        confirmButton.Enabled = true;
     }
 }
 
