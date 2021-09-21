@@ -2587,6 +2587,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/debounce@npm:*":
+  version: 3.0.0
+  resolution: "@types/debounce@npm:3.0.0"
+  checksum: af99f44f8ce90388aa5a909066c64b4ddc5efdff72bccf7dcef1fe8a04f03d03a7a42cc1f42ff14620c66923f92600ccfeb768bd77ad250f12a6ebca116ca719
+  languageName: node
+  linkType: hard
+
 "@types/eslint@npm:^7.2.6":
   version: 7.2.6
   resolution: "@types/eslint@npm:7.2.6"
@@ -2911,6 +2918,15 @@ __metadata:
   dependencies:
     source-map: ^0.6.1
   checksum: 5378f9384e976555bfe0476030c7f77b89f0563337ce710b76900f00fd83a0f20d506e4a22993fde29cefeeed2f97fafb6da281a61c40a99b4e8c1469530df0d
+  languageName: node
+  linkType: hard
+
+"@types/wavesurfer.js@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "@types/wavesurfer.js@npm:5.2.0"
+  dependencies:
+    "@types/debounce": "*"
+  checksum: d8dfa09733a9c96c81387ea4ff0a0fbfbace0ebcba74793e67bdc99a6f507c2303051b7c0a9a3a988abd0b145f5b96691a60ea5450a6a851ead45ee41db8f790
   languageName: node
   linkType: hard
 
@@ -4665,10 +4681,11 @@ __metadata:
     "@types/redux-thunk": ^2.1.0
     "@types/reselect": ^2.2.0
     "@types/styled-components": ^5.1.14
+    "@types/wavesurfer.js": ^5.2.0
     fast-memoize: ^2.5.2
     gh-pages: ^3.2.3
     localforage: ^1.10.0
-    prettier: ^2.3.2
+    prettier: ^2.4.1
     react: ^17.0.2
     react-dom: ^17.0.2
     react-player: ^2.9.0
@@ -4683,6 +4700,7 @@ __metadata:
     reselect: ^4.0.0
     styled-components: ^5.3.1
     typescript: ^4.0.3
+    wavesurfer.js: ^5.2.0
     web-vitals: ^0.2.4
     workbox-background-sync: ^5.1.3
     workbox-broadcast-update: ^5.1.3
@@ -12516,12 +12534,12 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "prettier@npm:2.3.2"
+"prettier@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "prettier@npm:2.4.1"
   bin:
     prettier: bin-prettier.js
-  checksum: 17ce5784ac67621c292df58e2da60b2ee150c2d6aebea22a6ad9e52fcd6a5e66c349d0a8436ea3bd8ff9d778920a5f68000d7625b74f43558718a49755aa5259
+  checksum: cc6830588b401b0d742862fe9c46bc9118204fb307c3abe0e49e95b35ed23629573807ffdf9cdd65289c252a0bb51fc0171437f6626ee36378dea80f0ee80b91
   languageName: node
   linkType: hard
 
@@ -15842,6 +15860,13 @@ typescript@^4.0.3:
     watchpack-chokidar2:
       optional: true
   checksum: 8b7cb8c8df8f4dd0e8ac47693c0141c4f020a4b031411247d600eca31522fde6f1f9a3a6f6518b46e71f7971b0ed5734c08c60d7fdd2530e7262776286f69236
+  languageName: node
+  linkType: hard
+
+"wavesurfer.js@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "wavesurfer.js@npm:5.2.0"
+  checksum: 544bcd8e256058f3e1b1572ced6cf8b852e6625df5ea035b92e8703a78dd659018788ad456010cc4e608d6a7057406a44fd408b9b9258a5baa0d74a30580daaf
   languageName: node
   linkType: hard
 

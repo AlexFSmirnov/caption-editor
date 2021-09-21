@@ -2,7 +2,13 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { State } from '../../redux/types';
-import { setPlaybackPlayedSeconds, setPlaybackDuration, setIsPlaying, clearIsPlayingRequest, popPendingSeek } from '../../redux/actions';
+import {
+    setPlaybackPlayedSeconds,
+    setPlaybackDuration,
+    setIsPlaying,
+    clearIsPlayingRequest,
+    popPendingSeek,
+} from '../../redux/actions';
 import { getIsPlayingPendingChange, getLatestPendingSeek } from '../../redux/selectors';
 import { useResizeObserver } from '../../common';
 import { PreviewPlayerContainer, PreviewPlayerVideo } from './style';

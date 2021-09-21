@@ -14,6 +14,9 @@ const persistConfig = {
     blacklist: [],
 };
 
-export const store = createStore(persistReducer<State, Action>(persistConfig, rootReducer), composeWithDevTools(applyMiddleware(thunk)));
+export const store = createStore(
+    persistReducer<State, Action>(persistConfig, rootReducer),
+    composeWithDevTools(applyMiddleware(thunk))
+);
 
 export const persistor = persistStore(store);

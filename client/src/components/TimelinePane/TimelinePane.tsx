@@ -1,5 +1,12 @@
+import { Waveform } from '../Waveform';
+import { TimelinePaneContainer } from './style';
+
 const TimelinePane: React.FC = () => {
-    return <div>yo i'm timeline</div>;
+    return (
+        <TimelinePaneContainer>
+            <Waveform />
+        </TimelinePaneContainer>
+    );
 };
 
 export default TimelinePane;

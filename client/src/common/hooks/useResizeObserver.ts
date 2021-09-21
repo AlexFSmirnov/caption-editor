@@ -1,6 +1,9 @@
 import { useRef, useEffect, RefObject } from 'react';
 
-const useResizeObserver = (callback: (entries: ResizeObserverEntry[], observer: ResizeObserver) => void, targetRef: RefObject<HTMLElement>) => {
+const useResizeObserver = (
+    callback: (entries: ResizeObserverEntry[], observer: ResizeObserver) => void,
+    targetRef: RefObject<HTMLElement>
+) => {
     const observerRef = useRef<ResizeObserver | null>(null);
 
     useEffect(() => {
