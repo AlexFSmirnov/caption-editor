@@ -119,7 +119,7 @@ public class CaptionCreator {
 public partial class ScriptInputForm : Form {
     private Vegas vegas;
     private System.ComponentModel.IContainer components = null;
-    private Label pathLabel;
+    private TextBox pathTextBox;
     private Label statusLabel;
     private Button confirmButton;
 
@@ -149,12 +149,13 @@ public partial class ScriptInputForm : Form {
         this.MinimizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
 
-        pathLabel = new Label();
-        pathLabel.Text = "";
-        pathLabel.AutoSize = false;
-        pathLabel.Location = new Point(10, 10);
-        pathLabel.Size = new Size(300, 32);
-        pathLabel.BorderStyle = BorderStyle.FixedSingle;
+        pathTextBox = new TextBox();
+        pathTextBox.Text = "";
+        pathTextBox.AutoSize = false;
+        pathTextBox.Multiline = true;
+        pathTextBox.Location = new Point(10, 10);
+        pathTextBox.Size = new Size(300, 32);
+        pathTextBox.TextChanged += new System.EventHandler(this.OnPathTextBoxChanged);
 
         statusLabel = new Label();
         statusLabel.Text = "Select a file";
@@ -176,10 +177,23 @@ public partial class ScriptInputForm : Form {
         confirmButton.Size = new Size(300, 32);
         confirmButton.Enabled = false;
 
-        this.Controls.Add(pathLabel);
+        this.Controls.Add(pathTextBox);
         this.Controls.Add(statusLabel);
         this.Controls.Add(browseButton);
         this.Controls.Add(confirmButton);
+    }
+
+    private void LoadConfiguration(String path) {
+        // TODO: type-check configuration json
+        if (path.Length > 10) {
+            ShowFileSuccess();
+        } else {
+            ShowFileError("Invalid configuration");
+        }
+    }
+
+    private void OnPathTextBoxChanged(object sender, EventArgs eventArgs) {
+        LoadConfiguration(pathTextBox.Text);
     }
 
     private void OnBrowseClick(object sender, EventArgs eventArgs) {
@@ -188,18 +202,13 @@ public partial class ScriptInputForm : Form {
 
         if (result == DialogResult.OK) {
             var path = fileDialog.FileName;
-            pathLabel.Text = path;
+            pathTextBox.Text = path;
 
-            // TODO: Type-check configuration json
-            if (false) {
-                ShowFileError("Invalid configuration");
-                return;
-            }
-
-            ShowFileSuccess();
-        } else {
-            ShowFileError("File load error");
+            LoadConfiguration(pathTextBox.Text);
+            return;
         }
+
+        ShowFileError("File load error");
     }
 
     private void OnConfirmClick(object sender, EventArgs eventArgs) {
